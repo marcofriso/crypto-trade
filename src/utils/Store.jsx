@@ -6,13 +6,13 @@ export const useStoreContext = () => useContext(StoreContext);
 
 export const StoreProvider = ({ children }) => {
   const [currency, setCurrency] = useState("USD");
-  const [coin, setCoin] = useState("BTC");
+  const [timestamp, setTimestamp] = useState();
 
   const store = {
     currency,
-    coin,
     setCurrency,
-    setCoin,
+    timestamp,
+    setTimestamp,
   };
 
   StoreProvider.propTypes = {

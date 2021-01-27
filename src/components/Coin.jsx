@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import { useStoreContext } from "../utils/Store";
+import { Spinner } from "../utils/Others";
 
 const Coin = (props) => {
   const history = useHistory();
-  const { currency } = useStoreContext();
+  const { currency, setTimestamp } = useStoreContext();
   const [res, setRes] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     match: {
@@ -14,13 +16,18 @@ const Coin = (props) => {
     },
   } = props;
 
+  const onClick = () => {
+    history.goBack();
+  };
+
   useEffect(() => {
     const params = {
       fsyms: id,
       tsyms: currency,
     };
 
-    const fetchData = () =>
+    const fetchData = () => {
+      setIsLoading(true);
       fetch(
         ` https://min-api.cryptocompare.com/data/pricemultifull?${new URLSearchParams(
           params
@@ -29,35 +36,47 @@ const Coin = (props) => {
         .then((response) => response.json())
         .then((response) => {
           console.count("COIN");
+          setIsLoading(false);
           setRes(response);
+          setTimestamp(new Date().toLocaleString());
         })
-        .catch((error) => console.log("FE2-API ERROR", error));
+        .catch((error) => {
+          console.log("FE2-API ERROR", error);
+          setIsLoading(false);
+        });
+    };
 
     fetchData();
     const fetchInterval = setInterval(fetchData, 60000);
     return () => clearInterval(fetchInterval);
-  }, [currency, id]);
+  }, [currency, id, setTimestamp]);
 
   return (
-    <div>
-      <button
-        type="submit"
-        onClick={() => {
-          history.goBack();
-        }}
-      >
-        GO BACK
-      </button>
-      <h2>COIN - {id}</h2>
-      {res && (
-        <div>
-          Market Cap - {res.DISPLAY[id][currency].MKTCAP}
-          <br />
-          Volume 24 Hours - {res.DISPLAY[id][currency].VOLUME24HOURTO}
-          <br />
-          Supply - {res.DISPLAY[id][currency].SUPPLY}
-        </div>
+    <div className="mx-3">
+      {isLoading && <Spinner />}
+      {!isLoading && res && res.DISPLAY[id][currency] && (
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">Market Cap</th>
+              <th scope="col">Volume 24 Hours</th>
+              <th scope="col">Supply</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{res.DISPLAY[id][currency].MKTCAP}</td>
+              <td>{res.DISPLAY[id][currency].VOLUME24HOURTO}</td>
+              <td>{res.DISPLAY[id][currency].SUPPLY}</td>
+            </tr>
+          </tbody>
+        </table>
       )}
+      <nav className="pagination justify-content-center fixed-bottom bg-white pt-2 pb-4">
+        <button className="page-link text-dark" type="submit" onClick={onClick}>
+          GO BACK
+        </button>
+      </nav>
     </div>
   );
 };

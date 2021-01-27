@@ -1,20 +1,14 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { useLocation } from "react-router-dom";
+import { currencyOptions } from "../utils/Others";
 import { useStoreContext } from "../utils/Store";
 
 const Header = () => {
-  const { currency, setCurrency } = useStoreContext();
+  const { currency, setCurrency, timestamp } = useStoreContext();
 
-  const currencyOptions = [
-    "USD",
-    "USDT",
-    "BTC",
-    "ETH",
-    "EUR",
-    "GBP",
-    "JPY",
-    "KRW",
-  ];
+  // const crypto = useLocation().pathname.replace(/\/coins\/|\//, "");
+  // console.log("CR", crypto);
 
   const onClick = (e) => {
     const curr = e.target.innerText;
@@ -23,8 +17,9 @@ const Header = () => {
   };
 
   return (
-    <div>
+    <div className="text-center">
       <h1>Crypto Trade</h1>
+      <p>Last update: {timestamp}</p>
       <div className="dropdown">
         <button
           className="btn dropdown-toggle"
@@ -43,7 +38,7 @@ const Header = () => {
           aria-hidden="true"
         >
           {currencyOptions.map((curr) => (
-            <a key={curr} value={curr} className="dropdown-item" href="#">
+            <a key={curr} className="dropdown-item" href="#">
               {curr}
             </a>
           ))}
