@@ -78,17 +78,13 @@ const Home = () => {
   const onHeaderClick = (e) => {
     const header = e.target.innerText;
 
-    if (
-      (header === orderVar.header && orderVar.ord === "desc") ||
-      header === "#"
-    ) {
-      setOrderVar({ header: "default", ord: "desc" });
+    if (header !== orderVar.header && header !== "#") {
+      return setOrderVar({ header, ord: "asc" });
     }
-    if (header !== (orderVar.header && "#")) {
-      setOrderVar({ header, ord: "asc" });
+    if (header === orderVar.header && orderVar.ord === "asc") {
+      return setOrderVar({ header, ord: "desc" });
     }
-    if (header === orderVar.header && orderVar.ord === "asc")
-      setOrderVar({ header, ord: "desc" });
+    return setOrderVar({ header: "default", ord: "desc" });
   };
 
   const onCoinClick = (coinName) => () => history.push(`/coins/${coinName}`);
@@ -128,7 +124,7 @@ const Home = () => {
   return (
     <div className="mx-3">
       {isLoading && <Spinner />}
-      {!isLoading && res && (
+      {!isLoading && res && res[0].DISPLAY[currency] && (
         <table className="table table-hover">
           <thead>
             <tr onClick={onHeaderClick} className="home-table-order">
