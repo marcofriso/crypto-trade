@@ -5,13 +5,18 @@ const StoreContext = createContext(null);
 export const useStoreContext = () => useContext(StoreContext);
 
 export const StoreProvider = ({ children }) => {
+  const initialOrderVar = { header: "", ord: "asc" };
+
   const [currency, setCurrency] = useState("USD");
   const [timestamp, setTimestamp] = useState();
+  const [orderVar, setOrderVar] = useState(initialOrderVar);
 
   const store = {
     currency,
-    setCurrency,
+    orderVar,
     timestamp,
+    setCurrency,
+    setOrderVar,
     setTimestamp,
   };
 

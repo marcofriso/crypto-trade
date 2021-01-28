@@ -6,9 +6,7 @@ import { useStoreContext } from "../utils/Store";
 
 const Header = () => {
   const { currency, setCurrency, timestamp } = useStoreContext();
-
-  // const crypto = useLocation().pathname.replace(/\/coins\/|\//, "");
-  // console.log("CR", crypto);
+  const crypto = useLocation().pathname.replace(/\/coins\/|\//, "");
 
   const onClick = (e) => {
     const curr = e.target.innerText;
@@ -18,7 +16,7 @@ const Header = () => {
 
   return (
     <div className="text-center">
-      <h1>Crypto Trade</h1>
+      <h1>{crypto || "Crypto Trade"}</h1>
       <p>Last update: {timestamp}</p>
       <div className="dropdown">
         <button

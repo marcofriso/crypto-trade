@@ -21,7 +21,7 @@ Each listing should reflect:
   - [x] should also be available as a direct route by the coins id - that is, a user should be able to enter the application at app/bitcoin and have the same experience.
 - [x] Use `styled-components`
 - [x] Add loading spinners
-- [ ] Ordering of the homepage tables by their respective table headers
+- [x] Ordering of the homepage tables by their respective table headers
 - [x] Add timestamp to the homepage with the time the latest data was fetched
 
 ## Instructions
