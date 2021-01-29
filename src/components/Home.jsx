@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import get from "lodash.get";
 import { Spinner } from "../utils/Others";
-import { useStoreContext } from "../utils/Store";
+import {
+  setIsLoadingAction,
+  setOrderVarAction,
+  setTimestampAction,
+} from "../actions";
 
 const ChangePct24Hours = ({ change }) =>
   change > 0 ? (
@@ -27,10 +32,15 @@ ChangePct24Hours.propTypes = {
   change: PropTypes.string.isRequired,
 };
 
-const Home = () => {
+const Home = ({
+  currency,
+  isLoading,
+  orderVar,
+  setIsLoading,
+  setOrderVar,
+  setTimestamp,
+}) => {
   const history = useHistory();
-  const { currency, setTimestamp, orderVar, setOrderVar } = useStoreContext();
-  const [isLoading, setIsLoading] = useState(false);
   const [res, setRes] = useState();
 
   const order = (coinData) => {
@@ -118,7 +128,7 @@ const Home = () => {
     fetchData();
     const fetchInterval = setInterval(fetchData, 60000);
     return () => clearInterval(fetchInterval);
-  }, [currency, setTimestamp]);
+  }, [currency, setIsLoading, setTimestamp]);
 
   return (
     <div className="mx-3">
@@ -166,4 +176,28 @@ const Home = () => {
   );
 };
 
-export default Home;
+Home.propTypes = {
+  currency: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  orderVar: PropTypes.shape({
+    header: PropTypes.string.isRequired,
+    ord: PropTypes.string.isRequired,
+  }).isRequired,
+  setIsLoading: PropTypes.func.isRequired,
+  setOrderVar: PropTypes.func.isRequired,
+  setTimestamp: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  currency: state.currency,
+  isLoading: state.isLoading,
+  orderVar: state.orderVar,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setIsLoading: (data) => dispatch(setIsLoadingAction(data)),
+  setOrderVar: (data) => dispatch(setOrderVarAction(data)),
+  setTimestamp: (data) => dispatch(setTimestampAction(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
-import { useStoreContext } from "../utils/Store";
 import { Spinner } from "../utils/Others";
+import { setIsLoadingAction, setTimestampAction } from "../actions";
 
-const Coin = (props) => {
+const Coin = ({ currency, isLoading, match, setTimestamp, setIsLoading }) => {
   const history = useHistory();
-  const { currency, setTimestamp } = useStoreContext();
   const [res, setRes] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const {
-    match: {
-      params: { id },
-    },
-  } = props;
+  const { id } = match.params;
 
   const onClick = () => {
     history.goBack();
@@ -49,7 +43,7 @@ const Coin = (props) => {
     fetchData();
     const fetchInterval = setInterval(fetchData, 60000);
     return () => clearInterval(fetchInterval);
-  }, [currency, id, setTimestamp]);
+  }, [currency, id, setIsLoading, setTimestamp]);
 
   return (
     <div className="mx-3">
@@ -82,11 +76,25 @@ const Coin = (props) => {
 };
 
 Coin.propTypes = {
+  currency: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   match: PropTypes.objectOf(PropTypes.any),
+  setIsLoading: PropTypes.func.isRequired,
+  setTimestamp: PropTypes.func.isRequired,
 };
 
 Coin.defaultProps = {
   match: {},
 };
 
-export default Coin;
+const mapStateToProps = (state) => ({
+  currency: state.currency,
+  isLoading: state.isLoading,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setIsLoading: (data) => dispatch(setIsLoadingAction(data)),
+  setTimestamp: (data) => dispatch(setTimestampAction(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Coin);
