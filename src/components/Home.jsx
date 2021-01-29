@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import get from "lodash.get";
 import { Spinner } from "../utils/Others";
-import {
-  setIsLoadingAction,
-  setOrderVarAction,
-  setTimestampAction,
-} from "../actions";
+import { setOrderVarAction } from "../actions";
 
 const ChangePct24Hours = ({ change }) =>
   change > 0 ? (
@@ -32,16 +28,8 @@ ChangePct24Hours.propTypes = {
   change: PropTypes.string.isRequired,
 };
 
-const Home = ({
-  currency,
-  isLoading,
-  orderVar,
-  setIsLoading,
-  setOrderVar,
-  setTimestamp,
-}) => {
+const Home = ({ currency, isLoading, orderVar, setOrderVar, coins }) => {
   const history = useHistory();
-  const [res, setRes] = useState();
 
   const order = (coinData) => {
     if (!orderVar.header) {
@@ -98,42 +86,10 @@ const Home = ({
 
   const onCoinClick = (coinName) => () => history.push(`/coins/${coinName}`);
 
-  useEffect(() => {
-    const params = {
-      limit: 10,
-      tsym: currency,
-    };
-
-    const fetchData = () => {
-      setIsLoading(true);
-      // from the data I see that "totalvolfull" represents the total market cap better than "mktcapfull"
-      fetch(
-        `https://min-api.cryptocompare.com/data/top/totalvolfull?${new URLSearchParams(
-          params
-        )}`
-      )
-        .then((response) => response.json())
-        .then((response) => {
-          console.count("HOME");
-          setIsLoading(false);
-          setRes(response.Data);
-          setTimestamp(new Date().toLocaleString());
-        })
-        .catch((error) => {
-          console.log("FE-API ERROR", error);
-          setIsLoading(false);
-        });
-    };
-
-    fetchData();
-    const fetchInterval = setInterval(fetchData, 60000);
-    return () => clearInterval(fetchInterval);
-  }, [currency, setIsLoading, setTimestamp]);
-
   return (
     <div className="mx-3">
       {isLoading && <Spinner />}
-      {!isLoading && res && res[0].DISPLAY[currency] && (
+      {!isLoading && coins[0] && coins[0].DISPLAY[currency] && (
         <table className="table table-hover">
           <thead>
             <tr onClick={onHeaderClick} className="home-table-order">
@@ -147,7 +103,7 @@ const Home = ({
             </tr>
           </thead>
           <tbody>
-            {order(res).map((coin, i) => (
+            {order(coins).map((coin, i) => (
               <tr
                 key={coin.CoinInfo.Name}
                 onClick={onCoinClick(coin.CoinInfo.Name)}
@@ -177,27 +133,29 @@ const Home = ({
 };
 
 Home.propTypes = {
+  coins: PropTypes.arrayOf(PropTypes.object),
   currency: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   orderVar: PropTypes.shape({
     header: PropTypes.string.isRequired,
     ord: PropTypes.string.isRequired,
   }).isRequired,
-  setIsLoading: PropTypes.func.isRequired,
   setOrderVar: PropTypes.func.isRequired,
-  setTimestamp: PropTypes.func.isRequired,
+};
+
+Home.defaultProps = {
+  coins: [],
 };
 
 const mapStateToProps = (state) => ({
   currency: state.currency,
   isLoading: state.isLoading,
   orderVar: state.orderVar,
+  coins: state.coins,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setIsLoading: (data) => dispatch(setIsLoadingAction(data)),
   setOrderVar: (data) => dispatch(setOrderVarAction(data)),
-  setTimestamp: (data) => dispatch(setTimestampAction(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

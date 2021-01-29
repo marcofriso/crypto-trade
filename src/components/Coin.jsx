@@ -3,9 +3,8 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import { Spinner } from "../utils/Others";
-import { setIsLoadingAction, setTimestampAction } from "../actions";
 
-const Coin = ({ currency, isLoading, match, setTimestamp, setIsLoading }) => {
+const Coin = ({ coins, currency, isLoading, match }) => {
   const history = useHistory();
   const [res, setRes] = useState();
   const { id } = match.params;
@@ -15,40 +14,13 @@ const Coin = ({ currency, isLoading, match, setTimestamp, setIsLoading }) => {
   };
 
   useEffect(() => {
-    const params = {
-      fsyms: id,
-      tsyms: currency,
-    };
-
-    const fetchData = () => {
-      setIsLoading(true);
-      fetch(
-        ` https://min-api.cryptocompare.com/data/pricemultifull?${new URLSearchParams(
-          params
-        )}`
-      )
-        .then((response) => response.json())
-        .then((response) => {
-          console.count("COIN");
-          setIsLoading(false);
-          setRes(response);
-          setTimestamp(new Date().toLocaleString());
-        })
-        .catch((error) => {
-          console.log("FE2-API ERROR", error);
-          setIsLoading(false);
-        });
-    };
-
-    fetchData();
-    const fetchInterval = setInterval(fetchData, 60000);
-    return () => clearInterval(fetchInterval);
-  }, [currency, id, setIsLoading, setTimestamp]);
+    setRes(coins.filter((data) => data.CoinInfo.Name === id)[0]);
+  }, [coins, id]);
 
   return (
     <div className="mx-3">
       {isLoading && <Spinner />}
-      {!isLoading && res && res.DISPLAY[id][currency] && (
+      {!isLoading && res && res.DISPLAY[currency] && (
         <table className="table">
           <thead>
             <tr>
@@ -59,9 +31,9 @@ const Coin = ({ currency, isLoading, match, setTimestamp, setIsLoading }) => {
           </thead>
           <tbody>
             <tr>
-              <td>{res.DISPLAY[id][currency].MKTCAP}</td>
-              <td>{res.DISPLAY[id][currency].VOLUME24HOURTO}</td>
-              <td>{res.DISPLAY[id][currency].SUPPLY}</td>
+              <td>{res.DISPLAY[currency].MKTCAP}</td>
+              <td>{res.DISPLAY[currency].VOLUME24HOURTO}</td>
+              <td>{res.DISPLAY[currency].SUPPLY}</td>
             </tr>
           </tbody>
         </table>
@@ -76,25 +48,21 @@ const Coin = ({ currency, isLoading, match, setTimestamp, setIsLoading }) => {
 };
 
 Coin.propTypes = {
+  coins: PropTypes.arrayOf(PropTypes.object),
   currency: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   match: PropTypes.objectOf(PropTypes.any),
-  setIsLoading: PropTypes.func.isRequired,
-  setTimestamp: PropTypes.func.isRequired,
 };
 
 Coin.defaultProps = {
+  coins: [],
   match: {},
 };
 
 const mapStateToProps = (state) => ({
+  coins: state.coins,
   currency: state.currency,
   isLoading: state.isLoading,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setIsLoading: (data) => dispatch(setIsLoadingAction(data)),
-  setTimestamp: (data) => dispatch(setTimestampAction(data)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Coin);
+export default connect(mapStateToProps)(Coin);

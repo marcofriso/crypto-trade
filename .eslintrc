@@ -17,6 +17,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "prefer-rest-params": "off",
     "func-names": "off",
+    "no-shadow": "off",
     "jsx-a11y/label-has-associated-control": [ 2, {
       "required": {
           "some": [ "nesting", "id" ]
