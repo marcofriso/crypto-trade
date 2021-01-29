@@ -25,7 +25,7 @@ export const fetchCoinsSuccess = (coins) => ({
 
 export const fetchCoinsFailure = (error) => ({
   type: "FETCH_COINS_FAILURE",
-  payload: error,
+  payload: error.toString(),
 });
 
 export const fetchCoins = (currency) => {
@@ -48,7 +48,6 @@ export const fetchCoins = (currency) => {
         dispatch(setTimestamp(new Date().toLocaleString()));
       })
       .catch((error) => {
-        console.log("HEROLLO FAIL", error);
         dispatch(fetchCoinsPending(false));
         dispatch(fetchCoinsFailure(error));
       });

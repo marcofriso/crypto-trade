@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import { fetchCoins } from "./actions";
 
-const App = ({ currency, fetchCoins }) => {
+const App = ({ currency, fetchCoins, fetchError }) => {
   useEffect(() => {
     fetchCoins(currency);
 
@@ -18,8 +18,6 @@ const App = ({ currency, fetchCoins }) => {
     return () => clearTimeout(timer);
   }, [currency, fetchCoins]);
 
-  // ADD ERROR HANDLER
-
   return (
     <BrowserRouter>
       <AppStyle>
@@ -28,6 +26,11 @@ const App = ({ currency, fetchCoins }) => {
           <Route path="/" component={Home} exact />
           <Route path="/coins/:id" component={Coin} exact />
         </Switch>
+        {fetchError && (
+          <div className="text-center mt-3">
+            <h3>{fetchError}</h3>
+          </div>
+        )}
       </AppStyle>
     </BrowserRouter>
   );
@@ -36,10 +39,12 @@ const App = ({ currency, fetchCoins }) => {
 App.propTypes = {
   currency: PropTypes.string.isRequired,
   fetchCoins: PropTypes.func.isRequired,
+  fetchError: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   currency: state.currency,
+  fetchError: state.fetchError,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -18,7 +18,7 @@ const coins = (state = [], action) => {
   }
 };
 
-const fetchCoinsError = (state = {}, action) => {
+const fetchError = (state = "", action) => {
   switch (action.type) {
     case "FETCH_COINS_FAILURE":
       return action.payload;
@@ -58,7 +58,7 @@ export default combineReducers({
   currency,
   isLoading,
   coins,
-  fetchCoinsError,
+  fetchError,
   orderVar,
   timestamp,
 });
