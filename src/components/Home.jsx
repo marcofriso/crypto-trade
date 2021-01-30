@@ -2,9 +2,16 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
-import get from "lodash.get";
-import { Spinner } from "../utils/Others";
-import { setOrderVarAction } from "../actions";
+import { sortCoins, Spinner } from "../utils/Others";
+import { setOrderVar } from "../actions";
+import {
+  coinName,
+  coinFullName,
+  coinImageUrl,
+  displayCoinPrice,
+  displayCoinMktcap,
+  displayCoinChangePct24Hour,
+} from "../selectors";
 
 const ChangePct24Hours = ({ change }) =>
   change > 0 ? (
@@ -30,47 +37,7 @@ ChangePct24Hours.propTypes = {
 
 const Home = ({ currency, isLoading, orderVar, setOrderVar, coins }) => {
   const history = useHistory();
-
-  const order = (coinData) => {
-    if (!orderVar.header) {
-      return coinData;
-    }
-
-    const { header, ord } = orderVar;
-    const sortKey =
-      header === "Coin"
-        ? ["CoinInfo", "FullName"]
-        : header === "Price"
-        ? ["RAW", currency, "PRICE"]
-        : header === "Market Cap"
-        ? ["RAW", currency, "MKTCAP"]
-        : header === "24h Change"
-        ? ["RAW", currency, "CHANGEPCT24HOUR"]
-        : ["RAW", currency, "TOTALTOPTIERVOLUME24HTO"];
-
-    return coinData.sort((a, b) => {
-      let keyA;
-      let keyB;
-
-      if (ord === "asc") {
-        keyA = get(a, sortKey);
-        keyB = get(b, sortKey);
-      } else {
-        keyA = get(b, sortKey);
-        keyB = get(a, sortKey);
-      }
-
-      // order strings
-      if (header === "Coin") {
-        return keyA.localeCompare(keyB);
-      }
-
-      // order numbers
-      if (keyA < keyB) return -1;
-      if (keyA > keyB) return 1;
-      return 0;
-    });
-  };
+  const sortedCoins = sortCoins(coins, currency, orderVar);
 
   const onHeaderClick = (e) => {
     const header = e.target.innerText;
@@ -103,24 +70,23 @@ const Home = ({ currency, isLoading, orderVar, setOrderVar, coins }) => {
             </tr>
           </thead>
           <tbody>
-            {order(coins).map((coin, i) => (
-              <tr
-                key={coin.CoinInfo.Name}
-                onClick={onCoinClick(coin.CoinInfo.Name)}
-              >
+            {sortedCoins.map((coin, i) => (
+              <tr key={coinName(coin)} onClick={onCoinClick(coinName(coin))}>
                 <th scope="col">{i + 1}</th>
                 <td>
                   <img
-                    src={`https://www.cryptocompare.com${coin.CoinInfo.ImageUrl}?width=35`}
-                    alt={coin.CoinInfo.Name}
+                    src={`https://www.cryptocompare.com${coinImageUrl(
+                      coin
+                    )}?width=35`}
+                    alt={coinName(coin)}
                   />{" "}
-                  {coin.CoinInfo.FullName}
+                  {coinFullName(coin)}
                 </td>
-                <td>{coin.DISPLAY[currency].PRICE}</td>
-                <td>{coin.DISPLAY[currency].MKTCAP}</td>
+                <td>{displayCoinPrice(coin, currency)}</td>
+                <td>{displayCoinMktcap(coin, currency)}</td>
                 <td className="">
                   <ChangePct24Hours
-                    change={coin.DISPLAY[currency].CHANGEPCT24HOUR}
+                    change={displayCoinChangePct24Hour(coin, currency)}
                   />
                 </td>
               </tr>
@@ -155,7 +121,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setOrderVar: (data) => dispatch(setOrderVarAction(data)),
+  setOrderVar: (data) => dispatch(setOrderVar(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

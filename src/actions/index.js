@@ -1,9 +1,9 @@
-export const setCurrencyAction = (currency) => ({
+export const setCurrency = (currency) => ({
   type: "SET_CURRENCY",
   payload: currency,
 });
 
-export const setOrderVarAction = (orderVar) => ({
+export const setOrderVar = (orderVar) => ({
   type: "SET_ORDERVAR",
   payload: orderVar,
 });

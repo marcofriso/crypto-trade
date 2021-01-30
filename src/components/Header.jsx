@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import { currencyOptions } from "../utils/Others";
-import { setCurrencyAction } from "../actions/index";
+import { setCurrency } from "../actions/index";
 
 const Header = ({ currency, timestamp, setCurrency }) => {
   const crypto = useLocation().pathname.replace(/\/coins\/|\//, "");
@@ -63,7 +62,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setCurrency: (data) => dispatch(setCurrencyAction(data)),
+  setCurrency: (data) => dispatch(setCurrency(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

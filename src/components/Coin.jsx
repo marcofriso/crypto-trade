@@ -3,24 +3,35 @@ import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import { Spinner } from "../utils/Others";
+import {
+  coinData,
+  displayCurrencyMktcap,
+  displayCurrencyVolume24HourTo,
+  displayCurrencySupply,
+} from "../selectors/index";
 
-const Coin = ({ coins, currency, isLoading, match }) => {
+const Coin = ({
+  isLoading,
+  coinData,
+  displayCurrencyMktcap,
+  displayCurrencyVolume24HourTo,
+  displayCurrencySupply,
+}) => {
   const history = useHistory();
   const [res, setRes] = useState();
-  const { id } = match.params;
 
   const onClick = () => {
     history.goBack();
   };
 
   useEffect(() => {
-    setRes(coins.filter((data) => data.CoinInfo.Name === id)[0]);
-  }, [coins, id]);
+    setRes(coinData);
+  }, [coinData]);
 
   return (
     <div className="mx-3">
       {isLoading && <Spinner />}
-      {!isLoading && res && res.DISPLAY[currency] && (
+      {!isLoading && res && (
         <table className="table">
           <thead>
             <tr>
@@ -31,9 +42,9 @@ const Coin = ({ coins, currency, isLoading, match }) => {
           </thead>
           <tbody>
             <tr>
-              <td>{res.DISPLAY[currency].MKTCAP}</td>
-              <td>{res.DISPLAY[currency].VOLUME24HOURTO}</td>
-              <td>{res.DISPLAY[currency].SUPPLY}</td>
+              <td>{displayCurrencyMktcap}</td>
+              <td>{displayCurrencyVolume24HourTo}</td>
+              <td>{displayCurrencySupply}</td>
             </tr>
           </tbody>
         </table>
@@ -48,21 +59,27 @@ const Coin = ({ coins, currency, isLoading, match }) => {
 };
 
 Coin.propTypes = {
-  coins: PropTypes.arrayOf(PropTypes.object),
-  currency: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  match: PropTypes.objectOf(PropTypes.any),
+  coinData: PropTypes.objectOf(PropTypes.any),
+  displayCurrencyMktcap: PropTypes.string,
+  displayCurrencyVolume24HourTo: PropTypes.string,
+  displayCurrencySupply: PropTypes.string,
 };
 
 Coin.defaultProps = {
-  coins: [],
-  match: {},
+  coinData: {},
+  displayCurrencyMktcap: "",
+  displayCurrencyVolume24HourTo: "",
+  displayCurrencySupply: "",
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   coins: state.coins,
-  currency: state.currency,
   isLoading: state.isLoading,
+  coinData: coinData(state, props),
+  displayCurrencyMktcap: displayCurrencyMktcap(state, props),
+  displayCurrencyVolume24HourTo: displayCurrencyVolume24HourTo(state, props),
+  displayCurrencySupply: displayCurrencySupply(state, props),
 });
 
 export default connect(mapStateToProps)(Coin);

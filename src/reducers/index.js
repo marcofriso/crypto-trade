@@ -45,7 +45,7 @@ const orderVar = (state = { header: "", ord: "asc" }, action) => {
   }
 };
 
-const timestamp = (state = "", action) => {
+const timestamp = (state = "LOADING...", action) => {
   switch (action.type) {
     case "SET_TIMESTAMP":
       return action.payload;
