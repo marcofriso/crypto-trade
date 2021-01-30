@@ -25,31 +25,31 @@ export const fetchCoinsSuccess = (coins) => ({
 
 export const fetchCoinsFailure = (error) => ({
   type: "FETCH_COINS_FAILURE",
-  payload: error.toString(),
+  payload: error,
 });
 
-export const fetchCoins = (currency) => {
+export const fetchCoins = () => (dispatch, getState) => {
+  const { currency, fetchError } = getState();
   const params = {
     limit: 10,
     tsym: currency,
   };
 
-  return (dispatch) => {
-    dispatch(fetchCoinsPending(true));
-    fetch(
-      `https://min-api.cryptocompare.com/data/top/totalvolfull?${new URLSearchParams(
-        params
-      )}`
-    )
-      .then((response) => response.json())
-      .then((response) => {
-        dispatch(fetchCoinsPending(false));
-        dispatch(fetchCoinsSuccess(response.Data));
-        dispatch(setTimestamp(new Date().toLocaleString()));
-      })
-      .catch((error) => {
-        dispatch(fetchCoinsPending(false));
-        dispatch(fetchCoinsFailure(error));
-      });
-  };
+  if (fetchError) dispatch(fetchCoinsFailure(""));
+  dispatch(fetchCoinsPending(true));
+  fetch(
+    `https://min-api.cryptocompare.com/data/top/totalvolfull?${new URLSearchParams(
+      params
+    )}`
+  )
+    .then((response) => response.json())
+    .then((response) => {
+      dispatch(fetchCoinsPending(false));
+      dispatch(fetchCoinsSuccess(response.Data));
+      dispatch(setTimestamp(new Date().toLocaleString()));
+    })
+    .catch((error) => {
+      dispatch(fetchCoinsPending(false));
+      dispatch(fetchCoinsFailure(error.toString()));
+    });
 };

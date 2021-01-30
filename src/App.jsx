@@ -10,10 +10,10 @@ import { fetchCoins } from "./actions";
 
 const App = ({ currency, fetchCoins, fetchError }) => {
   useEffect(() => {
-    fetchCoins(currency);
+    fetchCoins();
 
     const timer = setInterval(() => {
-      fetchCoins(currency);
+      fetchCoins();
     }, 60000);
     return () => clearTimeout(timer);
   }, [currency, fetchCoins]);
@@ -48,7 +48,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCoins: (data) => dispatch(fetchCoins(data)),
+  fetchCoins: () => dispatch(fetchCoins()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
