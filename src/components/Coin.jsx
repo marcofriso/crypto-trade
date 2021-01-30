@@ -21,7 +21,7 @@ const Coin = ({
   const [res, setRes] = useState();
 
   const onClick = () => {
-    history.goBack();
+    history.push("/");
   };
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const Coin = ({
       )}
       <nav className="pagination justify-content-center fixed-bottom bg-white pt-2 pb-4">
         <button className="page-link text-dark" type="submit" onClick={onClick}>
-          GO BACK
+          HOME
         </button>
       </nav>
     </div>
