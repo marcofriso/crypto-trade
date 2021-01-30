@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import AppStyle from "./AppStyle";
@@ -19,7 +19,7 @@ const App = ({ currency, fetchCoins, fetchError }) => {
   }, [currency, fetchCoins]);
 
   return (
-    <HashRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <AppStyle>
         <Header />
         <Switch>
@@ -32,7 +32,7 @@ const App = ({ currency, fetchCoins, fetchError }) => {
           </div>
         )}
       </AppStyle>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 
