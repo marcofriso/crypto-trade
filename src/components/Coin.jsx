@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import { Spinner } from "../utils/Others";
 import {
-  coinData,
-  displayCurrencyMktcap,
-  displayCurrencyVolume24HourTo,
-  displayCurrencySupply,
+  coinData as coinDataSelector,
+  displayCurrencyMktcap as displayCurrencyMktcapSelector,
+  displayCurrencyVolume24HourTo as displayCurrencyVolume24HourToSelector,
+  displayCurrencySupply as displayCurrencySupplySelector,
 } from "../selectors/index";
 
-const Coin = ({
-  isLoading,
-  coinData,
-  displayCurrencyMktcap,
-  displayCurrencyVolume24HourTo,
-  displayCurrencySupply,
-}) => {
+const Coin = ({ match }) => {
   const history = useHistory();
   const [res, setRes] = useState();
+
+  const coinData = useSelector((state) => coinDataSelector(state, { match }));
+  const isLoading = useSelector((state) => state.isLoading);
+  const displayCurrencyMktcap = useSelector((state) =>
+    displayCurrencyMktcapSelector(state, { match })
+  );
+  const displayCurrencyVolume24HourTo = useSelector((state) =>
+    displayCurrencyVolume24HourToSelector(state, { match })
+  );
+  const displayCurrencySupply = useSelector((state) =>
+    displayCurrencySupplySelector(state, { match })
+  );
 
   const onClick = () => {
     history.push("/");
@@ -59,27 +65,7 @@ const Coin = ({
 };
 
 Coin.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  coinData: PropTypes.objectOf(PropTypes.any),
-  displayCurrencyMktcap: PropTypes.string,
-  displayCurrencyVolume24HourTo: PropTypes.string,
-  displayCurrencySupply: PropTypes.string,
+  match: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
-Coin.defaultProps = {
-  coinData: {},
-  displayCurrencyMktcap: "",
-  displayCurrencyVolume24HourTo: "",
-  displayCurrencySupply: "",
-};
-
-const mapStateToProps = (state, props) => ({
-  coins: state.coins,
-  isLoading: state.isLoading,
-  coinData: coinData(state, props),
-  displayCurrencyMktcap: displayCurrencyMktcap(state, props),
-  displayCurrencyVolume24HourTo: displayCurrencyVolume24HourTo(state, props),
-  displayCurrencySupply: displayCurrencySupply(state, props),
-});
-
-export default connect(mapStateToProps)(Coin);
+export default Coin;

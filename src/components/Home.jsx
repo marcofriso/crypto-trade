@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { PropTypes } from "prop-types";
 import { sortCoins, Spinner } from "../utils/Others";
-import { setOrderVar } from "../actions";
+import { setOrderVar as setOrderVarAction } from "../actions";
 
 // ChangePct24Hours element
 const ChangePct24Hours = ({ change }) =>
@@ -81,18 +81,18 @@ const Home = () => {
 
   const sortedCoins = sortCoins(coins, currency, orderVar);
 
-  const setOrderVarHome = (data) => dispatch(setOrderVar(data));
+  const setOrderVar = (data) => dispatch(setOrderVarAction(data));
 
   const onHeaderClick = (e) => {
     const header = e.target.innerText;
 
     if (header !== orderVar.header && header !== "#") {
-      return setOrderVarHome({ header, ord: "asc" });
+      return setOrderVar({ header, ord: "asc" });
     }
     if (header === orderVar.header && orderVar.ord === "asc") {
-      return setOrderVarHome({ header, ord: "desc" });
+      return setOrderVar({ header, ord: "desc" });
     }
-    return setOrderVarHome({ header: "default", ord: "desc" });
+    return setOrderVar({ header: "default", ord: "desc" });
   };
 
   return (
