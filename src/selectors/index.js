@@ -34,13 +34,3 @@ export const displayCurrencySupply = createSelector(
   (coinData, currency) =>
     coinData && coinData.DISPLAY[currency] && coinData.DISPLAY[currency].SUPPLY
 );
-
-export const coinName = (coin) => coin.CoinInfo.Name;
-export const coinFullName = (coin) => coin.CoinInfo.FullName;
-export const coinImageUrl = (coin) => coin.CoinInfo.ImageUrl;
-export const displayCoinPrice = (coin, currency) =>
-  coin.DISPLAY[currency].PRICE;
-export const displayCoinMktcap = (coin, currency) =>
-  coin.DISPLAY[currency].MKTCAP;
-export const displayCoinChangePct24Hour = (coin, currency) =>
-  coin.DISPLAY[currency].CHANGEPCT24HOUR;
