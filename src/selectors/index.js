@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import get from "lodash.get";
 
 const selectCoins = (state) => state.coins;
 const selectCurrency = (state) => state.currency;
@@ -15,22 +16,17 @@ export const coinData = createSelector(
 export const displayCurrencyMktcap = createSelector(
   coinData,
   selectCurrency,
-  (coinData, currency) =>
-    coinData && coinData.DISPLAY[currency] && coinData.DISPLAY[currency].MKTCAP
+  (coinData, currency) => get(coinData, ["DISPLAY", currency, "MKTCAP"])
 );
 
 export const displayCurrencyVolume24HourTo = createSelector(
   coinData,
   selectCurrency,
-  (coinData, currency) =>
-    coinData &&
-    coinData.DISPLAY[currency] &&
-    coinData.DISPLAY[currency].VOLUME24HOURTO
+  (coinData, currency) => get(coinData, ["DISPLAY", currency, "VOLUME24HOURTO"])
 );
 
 export const displayCurrencySupply = createSelector(
   coinData,
   selectCurrency,
-  (coinData, currency) =>
-    coinData && coinData.DISPLAY[currency] && coinData.DISPLAY[currency].SUPPLY
+  (coinData, currency) => get(coinData, ["DISPLAY", currency, "SUPPLY"])
 );

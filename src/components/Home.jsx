@@ -1,11 +1,12 @@
 import React from "react";
+import get from "lodash.get";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { PropTypes } from "prop-types";
 import { sortCoins, Spinner } from "../utils/Others";
 import { setOrderVar as setOrderVarAction } from "../actions";
 
-// ChangePct24Hours element
+// ChangePct24Hours component
 const ChangePct24Hours = ({ change }) =>
   change > 0 ? (
     <div className="text-success text-right change-pct-24h">
@@ -25,21 +26,29 @@ const ChangePct24Hours = ({ change }) =>
   );
 
 ChangePct24Hours.propTypes = {
-  change: PropTypes.string.isRequired,
+  change: PropTypes.string,
 };
 
-// TableCoin element
+ChangePct24Hours.defaultProps = {
+  change: "",
+};
+
+// TableCoin component
 const TableCoin = ({ coins, index }) => {
   const history = useHistory();
   const currency = useSelector((state) => state.currency);
 
-  const coinName = coins[index].CoinInfo.Name;
-  const coinFullName = coins[index].CoinInfo.FullName;
-  const coinImageUrl = coins[index].CoinInfo.ImageUrl;
-  const displayCoinPrice = coins[index].DISPLAY[currency].PRICE;
-  const displayCoinMktcap = coins[index].DISPLAY[currency].MKTCAP;
-  const displayCoinChangePct24Hour =
-    coins[index].DISPLAY[currency].CHANGEPCT24HOUR;
+  const coinName = get(coins, [index, "CoinInfo", "Name"]);
+  const coinFullName = get(coins, [index, "CoinInfo", "FullName"]);
+  const coinImageUrl = get(coins, [index, "CoinInfo", "ImageUrl"]);
+  const displayCoinPrice = get(coins, [index, "DISPLAY", currency, "PRICE"]);
+  const displayCoinMktcap = get(coins, [index, "DISPLAY", currency, "MKTCAP"]);
+  const displayCoinChangePct24Hour = get(coins, [
+    index,
+    "DISPLAY",
+    currency,
+    "CHANGEPCT24HOUR",
+  ]);
 
   const onCoinClick = (coinName) => () => history.push(`/coins/${coinName}`);
 
@@ -71,7 +80,7 @@ TableCoin.defaultProps = {
   coins: [],
 };
 
-// Home element
+// Home component
 const Home = () => {
   const dispatch = useDispatch();
   const coins = useSelector((state) => state.coins);
@@ -98,7 +107,7 @@ const Home = () => {
   return (
     <div className="mx-3">
       {isLoading && <Spinner />}
-      {!isLoading && coins[0] && coins[0].DISPLAY[currency] && (
+      {!isLoading && coins[0] && (
         <table className="table table-hover">
           <thead>
             <tr onClick={onHeaderClick} className="home-table-order">

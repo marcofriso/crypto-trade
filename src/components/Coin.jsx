@@ -65,7 +65,9 @@ const Coin = ({ match }) => {
 };
 
 Coin.propTypes = {
-  match: PropTypes.objectOf(PropTypes.object).isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.objectOf(PropTypes.string),
+  }).isRequired,
 };
 
 export default Coin;

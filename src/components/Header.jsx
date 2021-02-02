@@ -1,11 +1,15 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { connect } from "react-redux";
-import { PropTypes } from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
 import { currencyOptions } from "../utils/Others";
-import { setCurrency } from "../actions/index";
+import { setCurrency as setCurrencyAction } from "../actions/index";
 
-const Header = ({ currency, timestamp, setCurrency }) => {
+const Header = () => {
+  const dispatch = useDispatch();
+  const currency = useSelector((state) => state.currency);
+  const timestamp = useSelector((state) => state.timestamp);
+  const setCurrency = (data) => dispatch(setCurrencyAction(data));
+
   const crypto = useLocation().pathname.replace(/\/coins\/|\//, "");
 
   const onClick = (e) => {
@@ -46,23 +50,4 @@ const Header = ({ currency, timestamp, setCurrency }) => {
   );
 };
 
-Header.propTypes = {
-  currency: PropTypes.string.isRequired,
-  timestamp: PropTypes.string,
-  setCurrency: PropTypes.func.isRequired,
-};
-
-Header.defaultProps = {
-  timestamp: "",
-};
-
-const mapStateToProps = (state) => ({
-  currency: state.currency,
-  timestamp: state.timestamp,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  setCurrency: (data) => dispatch(setCurrency(data)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header;
