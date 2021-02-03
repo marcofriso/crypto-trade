@@ -36,7 +36,7 @@ const currency = (state = "USD", action) => {
   }
 };
 
-const orderVar = (state = { header: "", ord: "asc" }, action) => {
+const orderVar = (state = { header: "", ord: "" }, action) => {
   switch (action.type) {
     case "SET_ORDERVAR":
       return action.payload;
