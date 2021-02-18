@@ -26,5 +26,5 @@ Each listing should reflect:
 
 ## Instructions
 
- - Install: `npm i`
+ - Install: `npm i` or `pnpm i`
  - Run `npm run start`
